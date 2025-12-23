@@ -1,61 +1,84 @@
 <?php
+do {
 
+$intro = ("Heyy let's make a nice christmas tree together!! ");
+$leafs_width = (int) trim(readline("Choose a width for the Leafs (max.60) : "));
+if ($leafs_width > 60) {
+  echo "Mhh that's too big, try less than 60 of width, try again!\n";
+  exit;
+}
+$parity = ($leafs_width % 2 === 0) ? "even" : "odd";
+$wood_width = (int) trim(readline("Choose a width for the wood (should be less than the width of your leafs by at least 2 and has to be {$parity} ! width of leafs : {$leafs_width}) : "));
+if ($wood_width > $leafs_width || $wood_width % 2 !== 0){
+  echo "No try again!\n";
+  exit;
 
-#feuilles :
+}
+$leafs_height = floor($leafs_width / 2);
+$leafs_height_message = "We picked the height for you so the tree will look prettier";
 
- #valeur de la dernière ligne de feuilles 
-$width = readline("choose a width for the leaves : ");
-$height = readline("choose a height for the leaves : ");
-$wood_width = readline("choose a width for the wood : ");
-$wood_height = readline("choose a height for the wood : ") ;          
-$current_sheet = 1;
-$resultOfWidthDivision = ($width / 2);
-$resultOfWoodWidthDivision = ($wood_width / 2);
-
-#for  = (point de départ; condition de continuité; expression finales)
-
-
-
-
-for ($i = 0; $i < $height; $i++)
-{
-  for ($j = 0; $j < $width; $j++)
-  {
-    if (
-        $j > ($resultOfWidthDivision - 2) - $i &&
-        $j < ($resultOfWidthDivision + 1) + $i 
-      ) {
-      echo "\e[0;34m". 'x';
-    } else {
-      echo ' ';
-    }
-  }
-
-  echo PHP_EOL;                
+$wood_height = readline("choose a height for the wood (min.1) : ");
+if ($wood_height < 1 ){
+  echo "No try again!\n";
+  exit;
+} 
+if ($wood_height > $leafs_height){
+  echo "No try again!\n";
+  exit;
 }
 
 
+$ready_message = strtolower(trim(readline("Are you ready 🎄? (y/n)")));
+if ($ready_message === "y") {
 
-for ($k = 0; $k < $wood_height; $k++)
-{
-  for ($l = 0; $l < $width; $l++)
-  {
-    if  (
-     $l > $resultOfWidthDivision - $resultOfWoodWidthDivision ||
-     $l < $resultOfWidthDivision - $resultOfWoodWidthDivision
-        ){
-      echo ' ';
-    } else {
-      echo "\e[0;35m" . 'oooo';
-    }
-  }
- echo PHP_EOL;  
+
+// ===== STAR =====
+if ($leafs_width % 2 === 0) {
+    // even width → 2 stars
+    $star = "**";
+} else {
+    // odd width → 1 star
+    $star = "*";
 }
 
+$starPadding = intdiv($leafs_width - strlen($star), 2);
 
-// $restart = readline('Voulez-vous relancer le programme (Non/non) : ' )
-
+echo str_repeat(' ', $starPadding);
+echo "\e[1;31m{$star}\e[0m" . PHP_EOL;
   
- 
+// ===== LEAVES =====
+
+$topWidth = $leafs_width - 2 * ($leafs_height - 1);
+
+if ($topWidth < 1) {
+    echo "No try again !";
+    exit;
+}
+
+for ($i = 0; $i < $leafs_height; $i++) {
+
+    $currentWidth = $topWidth + ($i * 2);
+
+    $padding = intdiv($leafs_width - $currentWidth, 2);
+
+    echo str_repeat(' ', $padding);
+    echo "\e[0;32m" . str_repeat('x', $currentWidth) . "\e[0m" . PHP_EOL;
+}
+
+
+  // ===== WOOD =====
+  $padding = intdiv($leafs_width - $wood_width, 2);
+
+  for ($k = 0; $k < $wood_height; $k++) {
+    echo str_repeat(' ', $padding);
+    echo "\e[0;30m";
+    for ($l = 0; $l < $wood_width; $l++) {
+      echo 'o';
+    }
+    echo "\e[0;30m" . PHP_EOL;
+}
+}
+$restart = strtolower(trim(readline("Another christmas tree? (y/n) : ")));
+} while ($restart === "y");
 
 ?>
